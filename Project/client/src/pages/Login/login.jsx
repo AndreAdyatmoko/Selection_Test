@@ -7,16 +7,18 @@ import {
   Input,
   Button,
   VStack,
-  Text,
-  Alert,
-  AlertIcon,
+  InputGroup,
+  InputRightElement,
 } from "@chakra-ui/react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+
+  const navigate = useNavigate(); // Inisialisasi useNavigate()
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -28,17 +30,19 @@ function Login() {
       });
 
       if (response.status === 200) {
-        // Handle successful login, e.g., redirect to dashboard
-        console.log("Login successful");
+        if (response.data.roleId === 1) {
+          navigate("/dashboard-admin");
+        } else {
+          navigate("/dashboard-user");
+        }
       }
     } catch (error) {
-      console.error("Error:", error);
-      if (error.response && error.response.data && error.response.data.message) {
-        setErrorMessage(error.response.data.message);
-      } else {
-        setErrorMessage("An error occurred");
-      }
+      alert(error.response.data.message);
     }
+  };
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
   };
 
   return (
@@ -59,29 +63,24 @@ function Login() {
           </FormControl>
           <FormControl id="password">
             <FormLabel color="white">Password</FormLabel>
-            <Input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
+            <InputGroup>
+              <Input
+                type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+              <InputRightElement width="4.5rem">
+                <Button h="1.75rem" size="sm" onClick={togglePasswordVisibility}>
+                  {showPassword ? "Hide" : "Show"}
+                </Button>
+              </InputRightElement>
+            </InputGroup>
           </FormControl>
-          {errorMessage && (
-            <Alert status="error" w="100%">
-              <AlertIcon />
-              {errorMessage}
-            </Alert>
-          )}
-          <Button type="submit" colorScheme="blue" w="100%">
+          <Button type="submit" colorScheme="blue" w="100%" mt={"10"}>
             Log In
           </Button>
         </form>
-        <Text fontSize="md">
-          Don't have an account?{" "}
-          <Text as="span" color="blue.500">
-            Sign up here
-          </Text>
-        </Text>
       </VStack>
     </Box>
   );
