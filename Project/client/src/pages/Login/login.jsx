@@ -28,8 +28,9 @@ function Login() {
         email,
         password,
       });
-
+      console.log(response.data);
       if (response.status === 200) {
+        localStorage.setItem("token", response.data.token);
         if (response.data.roleId === 1) {
           navigate("/dashboard-admin");
         } else {

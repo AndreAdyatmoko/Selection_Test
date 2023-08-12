@@ -9,6 +9,7 @@ import {
   Tabs,
 } from '@chakra-ui/react';
 import CreateUser from '../../components/dashboardAdmin/createUser';
+import CreatePayrollReport from '../../components/dashboardAdmin/reportPayroll';
 
 const DashboardAdmin = () => {
   const [selectedTab, setSelectedTab] = useState(0);
@@ -21,6 +22,7 @@ const DashboardAdmin = () => {
       console.error('An error occurred during logout:', error);
     }
   };
+
   return (
     <Box p={4} align="center">
       <Tabs index={selectedTab} onChange={(index) => setSelectedTab(index)} isLazy>
@@ -52,7 +54,7 @@ const DashboardAdmin = () => {
         </TabList>
         <TabPanels>
           <TabPanel>
-            {/* Content for Payroll Reports tab */}
+            <CreatePayrollReport /> {/* Add the CreatePayrollReport component here */}
           </TabPanel>
           <TabPanel>
             <CreateUser />

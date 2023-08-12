@@ -23,9 +23,6 @@ const CreateUserForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
-  const handlePasswordChange = (password) => {
-    // Add password validation logic here if needed
-  };
 
   const handleCreateUser = async () => {
     // Add validation logic here if needed

@@ -23,9 +23,11 @@ app.use(
 const db = require('../models');
 // db.sequelize.sync({alter: true});
 
-const userRouter = require('./routes');
+const { userRouter, payrollRouter, attendanceRouter } = require('./routes');
 
 app.use('/auth', userRouter);
+app.use('/payroll', payrollRouter);
+app.use('/attendance', attendanceRouter);
 
 app.listen(PORT, (err) => {
     if (err) {
