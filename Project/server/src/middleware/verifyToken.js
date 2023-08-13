@@ -14,6 +14,7 @@ const verifyToken = (req, res, next) => {
 let verifiedUser = jwt.verify(token, process.env.JWT_SECRET);
 if (!verifiedUser) return res.status(401).send("unauthorized request");
 req.user = verifiedUser;
+req.token = token;
     next();
   } catch (err) {
     return res.status(400).send("Token Expired");

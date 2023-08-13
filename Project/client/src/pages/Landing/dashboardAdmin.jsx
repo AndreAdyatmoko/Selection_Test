@@ -7,9 +7,11 @@ import {
   TabPanel,
   TabPanels,
   Tabs,
+  Text
 } from '@chakra-ui/react';
 import CreateUser from '../../components/dashboardAdmin/createUser';
-import CreatePayrollReport from '../../components/dashboardAdmin/reportPayroll';
+import DashboardSalary from '../../components/dashboardAdmin/reportPayroll';
+import PayrollReport from '../../components/dashboardAdmin/createPayroll'
 
 const DashboardAdmin = () => {
   const [selectedTab, setSelectedTab] = useState(0);
@@ -25,6 +27,9 @@ const DashboardAdmin = () => {
 
   return (
     <Box p={4} align="center">
+      <Text fontSize="2xl" fontWeight="bold" mb={4}>
+        Hai Admin Selamat Bekerja Sehat Selalu ya
+      </Text>
       <Tabs index={selectedTab} onChange={(index) => setSelectedTab(index)} isLazy>
         <TabList justifyContent="center" borderBottom="1px solid" borderColor="gray.200">
           <Tab
@@ -37,7 +42,7 @@ const DashboardAdmin = () => {
             fontWeight="bold"
             borderRadius="md"
           >
-            Payroll Reports
+            Dashboard Employee Salary
           </Tab>
           <Tab
             _selected={{ color: 'white', bg: 'purple.500' }}
@@ -54,13 +59,14 @@ const DashboardAdmin = () => {
         </TabList>
         <TabPanels>
           <TabPanel>
-            <CreatePayrollReport /> {/* Add the CreatePayrollReport component here */}
+            <DashboardSalary />
           </TabPanel>
           <TabPanel>
             <CreateUser />
           </TabPanel>
         </TabPanels>
       </Tabs>
+
 
       <Button colorScheme="red" size="lg" mt={4} onClick={handleLogout}>
         Log Out

@@ -3,12 +3,12 @@ import axios from "axios";
 import { Box, Heading, Table, Thead, Tbody, Tr, Th, Td } from "@chakra-ui/react";
 
 const ReportPayroll = () => {
-  const [salaryReport, setSalaryReport] = useState([]); // Updated state name
+  const [salaryReport, setSalaryReport] = useState([]);
 
   const fetchSalaryReport = async () => {
     try {
       const response = await axios.get("http://localhost:8000/payroll/coba");
-      setSalaryReport(response.data.salaryReport); // Update state with salaryReport data
+      setSalaryReport(response.data.salaryReport);
     } catch (error) {
       console.log(error);
     }
@@ -20,10 +20,10 @@ const ReportPayroll = () => {
 
   return (
     <Box p="4">
-      <Heading size="xl" mb="4">
-        All Employee Salary
+      <Heading size="xl" mb="4" color="teal.500">
+        All Employee Salary Report
       </Heading>
-      <Table variant="striped" colorScheme="teal">
+      <Table variant="striped" colorScheme="teal" size="md">
         <Thead>
           <Tr>
             <Th>Name</Th>

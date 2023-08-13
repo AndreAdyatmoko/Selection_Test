@@ -55,6 +55,7 @@ const CreateUserForm = () => {
           birthdate: '',
           joinDate: '',
           roleId: 2,
+          basedsalary: '',
         });
         setErrorMessage('');
       } else {
@@ -127,6 +128,16 @@ const CreateUserForm = () => {
             }
           />
         </FormControl>
+        <FormControl>
+          <FormLabel>Based Salary:</FormLabel>
+          <Input
+            type="number"
+            value={newUser.basedsalary}
+            onChange={(e) =>
+              setNewUser({ ...newUser, basedsalary: e.target.value })
+            }
+          />
+        </FormControl> 
         <FormControl>
           <FormLabel>Join Date:</FormLabel>
           <Input

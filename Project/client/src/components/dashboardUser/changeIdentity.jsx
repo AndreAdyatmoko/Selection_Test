@@ -56,15 +56,16 @@ const ChangeIdentityForm = () => {
       if (response.status === 200) {
         toast({
           title: 'Success',
-          description: 'Identity updated successfully!',
+          description: 'Update berhasil!',
           status: 'success',
           duration: 3000,
           isClosable: true,
         });
+        window.location.href = '/login'; // Mengarahkan ke halaman login setelah berhasil
       } else {
         toast({
           title: 'Error',
-          description: data.message || 'An error occurred while updating identity',
+          description: data.message || 'Link ini hanya sekali pakai ya',
           status: 'error',
           duration: 3000,
           isClosable: true,
@@ -72,6 +73,13 @@ const ChangeIdentityForm = () => {
       }
     } catch (error) {
       console.error('An error occurred:', error);
+      toast({
+        title: 'Error',
+        description: 'Link ini hanya sekali pakai ya',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
     }
   };
 

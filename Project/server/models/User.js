@@ -42,16 +42,20 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-          model: 'Roles',   // Nama model asosiasi
-          key: 'id',        // Kolom kunci asosiasi
+          model: 'Roles',   
+          key: 'id',        
         },
-        onUpdate: 'CASCADE', // Aksi saat role di-update
-        onDelete: 'CASCADE', // Aksi saat role dihapus
+        onUpdate: 'CASCADE', 
+        onDelete: 'CASCADE',
       },
+      basedsalary: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+      }
     },
     {
       sequelize,
-      modelName: 'User', // Nama model
+      modelName: 'User',
     }
   );
 

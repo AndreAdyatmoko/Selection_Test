@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const db = require('../../models');
 const User = db.User;
+const InvitationToken = db.InvitationToken;
 const path = require('path');
 require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
 const { sendInvitationEmail } = require('../helper/emailHelper');
@@ -54,7 +55,7 @@ const userController = {
 
   createUser: async (req, res) => {
     try {
-      const { email, password, fullname, birthdate, joinDate } = req.body;
+      const { email, password, fullname, birthdate, joinDate, basedsalary } = req.body;
       const existingUser = await User.findOne({
         where: {
           [db.Sequelize.Op.or]: [
@@ -77,13 +78,18 @@ const userController = {
           birthdate: birthdate,
           joinDate: joinDate,
           roleId: 2,
+          basedsalary: basedsalary,
         }, { transaction: t });
-
         const payload = {
           id: newUser.id,
           role: newUser.roleId
         };
         const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '2h' });
+        const tokenInvitation = await InvitationToken.create({
+          userId: newUser.id,
+          token: token
+        }, { transaction: t });
+
         const redirect = `http://localhost:3000/change-identity/${token}`;;
         sendInvitationEmail(email, redirect);
 
@@ -128,31 +134,50 @@ const userController = {
   },
 
   changeIdentity: async (req, res) => {
+    let transaction;
+
     try {
+      transaction = await db.sequelize.transaction();
+
       const { id } = req.user;
-      const { password, fullname, birthdate } = req.body;
-      const user = await User.findByPk(id);
-      if (!user) {
-        return res.status(404).json({
-          message: 'User not found',
-        });
+      const { token } = req;
+      const invite = await InvitationToken.findOne({
+        where: {
+          token: token
+        },
+        transaction
+      });
+      if (!invite) {
+        throw new Error('Invalid token');
       }
+      const { password, fullname, birthdate } = req.body;
+      const user = await User.findByPk(id, { transaction });
+      if (!user) {
+        throw new Error('User not found');
+      }
+      const updatedFields = {};
       if (password) {
         const hashedNewPassword = await bcrypt.hash(password, 10);
-        user.password = hashedNewPassword;
+        updatedFields.password = hashedNewPassword;
       }
       if (fullname) {
-        user.fullname = fullname;
+        updatedFields.fullname = fullname;
       }
       if (birthdate) {
-        user.birthdate = new Date(birthdate);
+        updatedFields.birthdate = new Date(birthdate);
       }
-      await user.save();
+      await user.update(updatedFields, { transaction });
+      await invite.destroy({where: {token: token}}, { transaction } );
+
+      await transaction.commit();
       return res.status(200).json({
         message: 'Identity changes successfully saved',
         user: user,
       });
     } catch (error) {
+      if (transaction) {
+        await transaction.rollback();
+      }
       console.log(error);
       return res.status(500).json({
         message: 'An error occurred on the server',

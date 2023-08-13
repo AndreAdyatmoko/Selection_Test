@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Heading, Text, Button, Alert, AlertIcon } from '@chakra-ui/react';
+import { Box, Heading, Text, Button, Alert, AlertIcon, Table, Thead, Tbody, Tr, Th, Td } from '@chakra-ui/react';
 import moment from 'moment';
+import PayrollPage from '../../components/dashboardUser/generatePayment';
 import axios from 'axios';
 
 const DashboardUser = () => {
@@ -9,6 +10,7 @@ const DashboardUser = () => {
   const [clockOutSuccess, setClockOutSuccess] = useState(false);
   const [attendanceHistory, setAttendanceHistory] = useState([]);
   const [username, setUsername] = useState('');
+  const [earlyClockOutAlert, setEarlyClockOutAlert] = useState(false);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -74,31 +76,44 @@ const DashboardUser = () => {
   };
 
   const handleClockOut = async () => {
-    try {
-      const response = await axios.post(
-        'http://localhost:8000/attendance/clock-out',
-        {}, 
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
+    const lastAttendance = attendanceHistory[attendanceHistory.length - 1];
+    const clockInTime = lastAttendance.clockIn;
+    const clockOutTime = new Date();
+    const workHours = (clockOutTime - clockInTime) / (1000 * 60 * 60);
+  
+    if (workHours >= 7) {
+      try {
+        const responseClockOut = await axios.post(
+          'http://localhost:8000/attendance/clock-out',
+          {},
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${localStorage.getItem('token')}`,
+            },
           }
+        );
+  
+        if (responseClockOut.data.message === 'Clock out successful') {
+          setClockOutSuccess(true);
+          setTimeout(() => {
+            setClockOutSuccess(false);
+          }, 3000); // Hapus pesan setelah 3 detik
         }
-      );
-      if (response.data.message === 'Clock out successful') {
-        setClockOutSuccess(true);
-        setTimeout(() => {
-          setClockOutSuccess(false);
-        }, 3000);
+      } catch (error) {
+        console.error('An error occurred during clock out:', error);
       }
-    } catch (error) {
-      console.error('An error occurred:', error);
+    } else {
+      setEarlyClockOutAlert(true);
+      setTimeout(() => {
+        setEarlyClockOutAlert(false);
+      }, 3000);
     }
   };
 
   useEffect(() => {
     fetchAttendanceHistory();
-  }, []);
+  }, [clockInSuccess, clockOutSuccess]);
 
   const fetchAttendanceHistory = async () => {
     try {
@@ -116,11 +131,12 @@ const DashboardUser = () => {
       console.error('An error occurred:', error);
     }
   };
+  
 
   return (
     <Box p={4} align="center">
       <Heading as="h2" size="lg" mb={4}>
-        Hai {username}
+        Selamat Bekerja dan Sehat selalu
       </Heading>
 
       <Box p={4} bg="black" boxShadow="md" borderRadius="md" w="100%" mb={4}>
@@ -146,34 +162,48 @@ const DashboardUser = () => {
             Clock out successful!
           </Alert>
         )}
+        {earlyClockOutAlert && (
+          <Alert status="warning" mt={4} >
+            <AlertIcon />
+            Ini masih jam kerja, minimal kerja 7 jam sebelum clock out.
+          </Alert>
+        )}
       </Box>
 
       <Box p={4} bg="black" boxShadow="md" borderRadius="md" w="100%" mb={4}>
         <Heading as="h2" size="lg" mb={2}>
-          History Attendance
+          Rekap Absen
         </Heading>
-        {attendanceHistory.map((attendance, index) => (
-          <Box
-            key={index}
-            p={4}
-            border="1px solid gray"
-            borderRadius="md"
-            mb={4}
-            boxShadow="md"
-          >
-            <Text fontSize="xl" fontWeight="bold">
-              Name: {attendance.User.fullname}
-            </Text>
-            <Text mt={2}>
-              Clock In: {moment(attendance.clockIn).format('YYYY-MM-DD HH:mm:ss')}
-              <br />
-              Clock Out:{' '}
-              {attendance.clockOut
-                ? moment(attendance.clockOut).format('YYYY-MM-DD HH:mm:ss')
-                : 'Not yet'}
-            </Text>
-          </Box>
-        ))}
+        <Table variant="simple">
+          <Thead>
+            <Tr>
+              <Th>Name</Th>
+              <Th>Clock In</Th>
+              <Th>Clock Out</Th>
+            </Tr>
+          </Thead>
+          <Tbody>
+            {attendanceHistory.map((attendance, index) => (
+              <Tr key={index}>
+                <Td>{attendance.User.fullname}</Td>
+                <Td>
+                  {attendance.clockIn
+                    ? moment(attendance.clockIn).format("YYYY-MM-DD HH:mm:ss")
+                    : "Not yet"}
+                </Td>
+                <Td>
+                  {attendance.clockOut
+                    ? moment(attendance.clockOut).format("YYYY-MM-DD HH:mm:ss")
+                    : "Not yet"}
+                </Td>
+              </Tr>
+            ))}
+          </Tbody>
+        </Table>
+      </Box>
+      <Box>
+        <Text fontSize="2xl">Generate Payment</Text>
+          <PayrollPage/>
       </Box>
 
       <Box p={4} bg="black" boxShadow="md" borderRadius="md" w="100%" mb={4}>

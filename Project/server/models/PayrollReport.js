@@ -29,10 +29,6 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
-      baseSalary: {
-        type: DataTypes.FLOAT,
-        allowNull: false,
-      },
       deductions: {
         type: DataTypes.FLOAT,
         allowNull: false,
@@ -44,7 +40,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     {
       sequelize,
-      modelName: 'PayrollReport', // Nama model
+      modelName: 'PayrollReport',
     }
   );
 

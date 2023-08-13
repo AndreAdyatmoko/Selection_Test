@@ -1,5 +1,6 @@
 const db = require('../../models');
 const User = db.User;
+const PayrollReport = db.PayrollReport;
 const AttendanceLog = db.AttendanceLog;
 
 const AttendanceController = {
@@ -36,6 +37,13 @@ const AttendanceController = {
       }
 
       lastAttendance.clockOut = clockOutTime;
+      const report = await PayrollReport.findOne({
+        where: {
+          userId: id,
+        },
+      })
+      report.totalSalary += report.baseSalary;
+      await report.save();
       await lastAttendance.save();
 
       res.status(200).json({ message: 'Clock out successful', attendance: lastAttendance });
