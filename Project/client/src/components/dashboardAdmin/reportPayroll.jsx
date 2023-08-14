@@ -3,12 +3,12 @@ import axios from "axios";
 import { Box, Heading, Table, Thead, Tbody, Tr, Th, Td } from "@chakra-ui/react";
 
 const ReportPayroll = () => {
-  const [salaryReport, setSalaryReport] = useState([]); // Updated state name
+  const [salaryReport, setSalaryReport] = useState([]);
 
   const fetchSalaryReport = async () => {
     try {
       const response = await axios.get("http://localhost:8000/payroll/coba");
-      setSalaryReport(response.data.salaryReport); // Update state with salaryReport data
+      setSalaryReport(response.data.salaryReport); 
     } catch (error) {
       console.log(error);
     }

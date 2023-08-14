@@ -24,6 +24,8 @@ const AttendanceController = {
   clockOut: async (req, res) => {
     try {
       const {id} = req.user;
+      const user = await User.findByPk(id);
+      console.log(user);
       const clockOutTime = new Date();
       const lastAttendance = await AttendanceLog.findOne({
         where: {
@@ -31,7 +33,6 @@ const AttendanceController = {
         },
         order: [['clockIn', 'DESC']],
       });
-
       if (!lastAttendance) {
         return res.status(400).json({ message: 'No ongoing attendance found' });
       }
@@ -42,7 +43,8 @@ const AttendanceController = {
           userId: id,
         },
       })
-      report.totalSalary += report.baseSalary;
+      console.log(report);
+      report.totalSalary += user.basedsalary;
       await report.save();
       await lastAttendance.save();
 

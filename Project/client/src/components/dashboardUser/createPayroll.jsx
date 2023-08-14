@@ -47,7 +47,7 @@ const CreatePayrollReport = () => {
       }
     } catch (error) {
       setSuccessMessage('');
-      setErrorMessage('Terjadi kesalahan saat membuat laporan gaji.');
+      setErrorMessage('Terjadi kesalahan saat melakukan pengecekan Gaji');
       console.error('An error occurred:', error);
     }
   };
@@ -55,7 +55,7 @@ const CreatePayrollReport = () => {
   return (
     <Box p={4}>
       <Heading as="h2" size="lg" mb={4}>
-        Buat Laporan Gaji
+        Cek detail Gaji Mu disini ya 
       </Heading>
 
       {successMessage && (
@@ -73,11 +73,11 @@ const CreatePayrollReport = () => {
       )}
 
       <FormControl mb={4}>
-        <FormLabel>ID Pengguna</FormLabel>
+        <FormLabel>Nama Karyawan</FormLabel>
         <Input
           value={userId}
           onChange={(e) => setUserId(e.target.value)}
-          placeholder="Masukkan ID Pengguna"
+          placeholder="Masukkan Namamu disini"
         />
       </FormControl>
 
@@ -104,7 +104,7 @@ const CreatePayrollReport = () => {
       </FormControl>
 
       <FormControl mb={4}>
-        <FormLabel>Gaji Pokok</FormLabel>
+        <FormLabel>Detail Gaji</FormLabel>
         <Input
           type="number"
           value={baseSalary}
@@ -114,7 +114,7 @@ const CreatePayrollReport = () => {
       </FormControl>
 
       <Button colorScheme="blue" onClick={handleCreatePayrollReport}>
-        Buat Laporan Gaji
+        Cek Riwatat Gaji
       </Button>
     </Box>
   );

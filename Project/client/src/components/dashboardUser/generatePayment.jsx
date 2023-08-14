@@ -7,7 +7,10 @@ const ReportPayroll = () => {
 
   const fetchSalaryReport = async () => {
     try {
-      const response = await axios.get("http://localhost:8000/payroll/coba");
+      const currentMonth = new Date().getMonth() + 1; // Add 1 because months are 0-indexed
+      const currentYear = new Date().getFullYear();
+
+      const response = await axios.get(`http://localhost:8000/payroll/get?month=${currentMonth}&year=${currentYear}`);
       setSalaryReport(response.data.salaryReport);
     } catch (error) {
       console.log(error);

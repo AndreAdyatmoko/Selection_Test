@@ -3,6 +3,7 @@ import { Box, Heading, Text, Button, Alert, AlertIcon, Table, Thead, Tbody, Tr, 
 import moment from 'moment';
 import PayrollPage from '../../components/dashboardUser/generatePayment';
 import axios from 'axios';
+import CreatePayrollReport from '../../components/dashboardUser/createPayroll';
 
 const DashboardUser = () => {
   const [currentTime, setCurrentTime] = useState('');
@@ -22,26 +23,8 @@ const DashboardUser = () => {
   }, []);
 
   useEffect(() => {
-    fetchUsername();
     fetchAttendanceHistory();
   }, []);
-
-  const fetchUsername = async () => {
-    try {
-      const response = await axios.get(
-        'http://localhost:8000/user/profile',
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
-          }
-        }
-      );
-      setUsername(response.data.username);
-    } catch (error) {
-      console.error('An error occurred:', error);
-    }
-  };
 
   const handleLogout = () => {
     try {
@@ -68,7 +51,7 @@ const DashboardUser = () => {
         setClockInSuccess(true);
         setTimeout(() => {
           setClockInSuccess(false);
-        }, 3000); // Hapus pesan setelah 3 detik
+        }, 3000);
       }
     } catch (error) {
       console.error('An error occurred:', error);
@@ -76,12 +59,13 @@ const DashboardUser = () => {
   };
 
   const handleClockOut = async () => {
-    const lastAttendance = attendanceHistory[attendanceHistory.length - 1];
-    const clockInTime = lastAttendance.clockIn;
+    const clockInTime = new Date(attendanceHistory[0].clockIn); // Pastikan clockInTime sudah dalam tipe Date
     const clockOutTime = new Date();
-    const workHours = (clockOutTime - clockInTime) / (1000 * 60 * 60);
-  
-    if (workHours >= 7) {
+    const workHoursInMs = clockOutTime - clockInTime; // Selisih waktu dalam milidetik
+    const workHours = workHoursInMs / (1000 * 60 * 60); // Konversi milidetik ke jam
+    // const workHours = 8;
+  console.log(clockInTime);
+    if (workHours >= 1) {
       try {
         const responseClockOut = await axios.post(
           'http://localhost:8000/attendance/clock-out',
@@ -93,7 +77,6 @@ const DashboardUser = () => {
             },
           }
         );
-  
         if (responseClockOut.data.message === 'Clock out successful') {
           setClockOutSuccess(true);
           setTimeout(() => {
@@ -202,7 +185,11 @@ const DashboardUser = () => {
         </Table>
       </Box>
       <Box>
-        <Text fontSize="2xl">Generate Payment</Text>
+        <Text fontSize="2xl"></Text>
+          <CreatePayrollReport/>
+      </Box>
+      <Box>
+        <Text fontSize="2xl"></Text>
           <PayrollPage/>
       </Box>
 

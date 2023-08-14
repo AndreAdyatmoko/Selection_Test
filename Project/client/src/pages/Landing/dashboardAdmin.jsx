@@ -11,7 +11,7 @@ import {
 } from '@chakra-ui/react';
 import CreateUser from '../../components/dashboardAdmin/createUser';
 import DashboardSalary from '../../components/dashboardAdmin/reportPayroll';
-import PayrollReport from '../../components/dashboardAdmin/createPayroll'
+
 
 const DashboardAdmin = () => {
   const [selectedTab, setSelectedTab] = useState(0);
